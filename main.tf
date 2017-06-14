@@ -5,7 +5,7 @@ variable "chef-server-organization" { default = "terraform" }
 resource "random_id" "automate_instance_id" { byte_length = 4 }
 
 # VPC networking
-variable "aws_region" { default = "us-east-2" }
+variable "aws_region" { default = "us-west-2" }
 variable "aws_profile" { default = "default" }
 variable "automate_vpc" { default = "vpc-fa58989d" } # jhud-vpc in success-aws
 data "aws_subnet_ids" "automate" { vpc_id = "${var.automate_vpc}" }
@@ -21,6 +21,11 @@ variable "aws_key_pair_file" { default = "~/.ssh/id_rsa" }
 variable "automate_tag" { default = "terraform_automate" }
 variable "tag_dept" { default = "SCE" }
 variable "tag_contact" { default = "irving" }
+
+# Minimum version and future backend configuration
+terraform {
+  required_version = "> 0.9.5"
+}
 
 # Basic AWS info
 provider "aws" {
@@ -39,6 +44,6 @@ data "aws_ami" "centos" {
     name   = "virtualization-type"
     values = ["hvm"]
   }
-  
+
   owners = ["446539779517"]
 }
