@@ -14,13 +14,13 @@ data "aws_subnet_ids" "automate" { vpc_id = "${var.automate_vpc}" }
 variable "aws_build_node_instance_type" { default = "t2.medium" }
 variable "aws_instance_type" { default = "m4.xlarge" }
 variable "aws_ami_user" { default = "centos" }
-variable "aws_key_pair_name" { default = "irving" }
-variable "aws_key_pair_file" { default = "~/.ssh/id_rsa" }
+variable "aws_key_pair_name" { default = "jhudson_sol_usw2" }
+variable "aws_key_pair_file" { default = "~/.ssh/jhudson_sol_usw2.pem" }
 
 # Tagging
 variable "automate_tag" { default = "terraform_automate" }
 variable "tag_dept" { default = "SCE" }
-variable "tag_contact" { default = "irving" }
+variable "tag_contact" { default = "jhudson" }
 
 # Minimum version and future backend configuration
 terraform {

@@ -31,7 +31,7 @@ resource "aws_instance" "chef_server" {
   }
 
   tags {
-    Name      = "${format("${var.automate_tag}_chef_server_%02d_${random_id.automate_instance_id.hex}", count.index + 1)}"
+    Name      = "${format("${var.automate_tag}_chef_server2_%02d_${random_id.automate_instance_id.hex}", count.index + 1)}"
     X-Dept    = "${var.tag_dept}"
     X-Contact = "${var.tag_contact}"
   }
@@ -61,12 +61,30 @@ resource "aws_instance" "chef_server" {
     source = ".chef/delivery-validator.pub"
     destination = "/tmp/pre-delivery-validator.pub"
   }
+
   provisioner "remote-exec" {
     inline = [
-      "curl -L http://chef-installer.chameleon-development.ca -o installer.sh && sudo SVWAIT=30 bash ./installer.sh -c ${aws_instance.chef_server.public_dns}",
-      "sudo chef-server-ctl add-client-key delivery delivery-validator --public-key-path /tmp/pre-delivery-validator.pub"
+      "curl -L https://gist.githubusercontent.com/itmustbejj/9f97ab113fddcc42015b2e87457db89e/raw/60ce1d55f62baf59c47c74e76632925716a5686a/gistfile1.txt -o installer.sh && sudo SVWAIT=30 bash ./installer.sh -c ${aws_instance.chef_server.public_dns}",
+      "sudo chef-server-ctl add-client-key delivery delivery-validator --public-key-path /tmp/pre-delivery-validator.pub",
+      "sudo mkdir -p /tmp/chef_installer/data_bags/automate",
+      "sudo chown -R ${var.aws_ami_user} /tmp/chef_installer",
     ]
   }
+
+  provisioner "file" {
+    source = "files/automate.json"
+    destination = "/tmp/chef_installer/data_bags/automate/automate.json"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "knife ssl fetch https://`hostname --fqdn`",
+      "knife cookbook upload chef-services --all -u delivery -k /tmp/delivery.pem --config-option cookbook_path='/tmp/chef_installer/cookbooks' -s https://`hostname --fqdn`/organizations/delivery",
+      "knife data bag create --server-url https://`hostname --fqdn`/organizations/delivery -u delivery -k /tmp/delivery.pem --config-option data_bag_path=/tmp/chef_installer/data_bags automate",
+      "knife data bag from file --server-url https://`hostname --fqdn`/organizations/delivery -u delivery -k /tmp/delivery.pem --config-option data_bag_path=/tmp/chef_installer/data_bags automate /tmp/chef_installer/data_bags/automate/automate.json"
+    ]
+  }
+
 }
 
 # template to delay reading of validator key

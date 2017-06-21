@@ -61,17 +61,17 @@ resource "aws_instance" "chef_automate" {
   }
 
   provisioner "chef"  {
-    attributes_json = <<-EOF
-    {
-        "tags": "automate_server",
-        "chef_automate": {
-            "fqdn": "${aws_instance.chef_automate.public_dns}"
-        },
-        "chef_server": {
-            "fqdn": "${aws_instance.chef_server.public_dns}"
-        }
+    attributes_json = <<EOF
+{
+    "tags": "automate_server",
+    "chef_automate": {
+        "fqdn": "${aws_instance.chef_automate.public_dns}"
+    },
+    "chef_server": {
+        "fqdn": "${aws_instance.chef_server.public_dns}"
     }
-    EOF
+}
+EOF
     environment = "_default"
     fetch_chef_certificates = true
     run_list = ["chef-services::delivery"]
