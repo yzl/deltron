@@ -124,6 +124,17 @@ resource "aws_security_group_rule" "ingress_chef_automate_allow_8989_tcp" {
   security_group_id = "${aws_security_group.chef_automate.id}"
 }
 
+# Allow elasticsearch clients
+resource "aws_security_group_rule" "ingress_chef_automate_allow_2379_tcp" {
+  type = "ingress"
+  from_port = 2379
+  to_port = 2380
+  protocol = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+  security_group_id = "${aws_security_group.chef_automate.id}"
+  source_:security_group_id = "${aws_security_group.chef_automate.id}"
+}
+
 # Allow all Chef Server
 resource "aws_security_group_rule" "ingress_chef_automate_allow_all_chef_server" {
   type = "ingress"

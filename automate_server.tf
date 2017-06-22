@@ -81,7 +81,4 @@ EOF
     user_key = "${data.template_file.delivery_validator.rendered}"
     client_options = ["trusted_certs_dir = '/etc/chef/trusted_certs'"]
   }
-  provisioner "local-exec" {
-    command = "scp -oStrictHostKeyChecking=no -i .keys/${var.aws_key_pair_name}.pem ${var.aws_ami_user}@${aws_instance.chef_automate.public_dns}:/tmp/test.creds ./"
-  }
 }
