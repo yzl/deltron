@@ -64,12 +64,13 @@ resource "aws_instance" "chef_automate" {
     attributes_json = <<EOF
 {
     "tags": "automate_server",
+    "peers": ["${formatlist("https://%s:2379", split(",",join(",", aws_instance.es_backend.*.public_dns)))}"],
     "chef_automate": {
-        "fqdn": "${aws_instance.chef_automate.public_dns}"
+      "fqdn": "${aws_instance.chef_automate.public_dns}"
     },
     "chef_server": {
-        "fqdn": "${aws_instance.chef_server.public_dns}"
-    }
+      "fqdn": "${aws_instance.chef_server.public_dns}"
+    },
 }
 EOF
     environment = "_default"

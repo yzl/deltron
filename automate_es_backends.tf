@@ -13,6 +13,7 @@
    vpc_security_group_ids = ["${aws_security_group.chef_automate.id}"]
    ebs_optimized   = false
    count = 3
+   depends_on = ["aws_instance.es_backend"]
 
    root_block_device {
      delete_on_termination = true
@@ -37,12 +38,9 @@
       {
         "tags": "es_backend",
         "search_bootstrap": "${aws_instance.es_backend.0.public_dns}",
-          "chef_automate": {
-              "fqdn": "${aws_instance.chef_automate.public_dns}"
-          },
-          "chef_server": {
-              "fqdn": "${aws_instance.chef_server.public_dns}"
-          }
+        "chef_server": {
+            "fqdn": "${aws_instance.chef_server.public_dns}"
+        }
       }
       EOF
       environment = "_default"
