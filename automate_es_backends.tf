@@ -13,7 +13,6 @@
    vpc_security_group_ids = ["${aws_security_group.chef_automate.id}"]
    ebs_optimized   = false
    count = 3
-   depends_on = ["aws_instance.es_backend"]
 
    root_block_device {
      delete_on_termination = true

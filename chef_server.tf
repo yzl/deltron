@@ -71,7 +71,6 @@ resource "aws_instance" "chef_server" {
     inline = [
       "sudo SVWAIT=30 bash /tmp/installer.sh -c ${aws_instance.chef_server.public_dns}",
       "sudo chef-server-ctl add-client-key delivery delivery-validator --public-key-path /tmp/pre-delivery-validator.pub",
-      "ls",
     ]
   }
 }
