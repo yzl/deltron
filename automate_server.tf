@@ -61,18 +61,18 @@ resource "aws_instance" "chef_automate" {
   }
 
   provisioner "chef"  {
-    attributes_json = <<EOF
-{
-    "tags": "automate_server",
-    "peers": ["${formatlist("https://%s:2379", split(",",join(",", aws_instance.es_backend.*.public_dns)))}"],
-    "chef_automate": {
-      "fqdn": "${aws_instance.chef_automate.public_dns}"
-    },
-    "chef_server": {
-      "fqdn": "${aws_instance.chef_server.public_dns}"
-    },
-}
-EOF
+    attributes_json = <<-EOF
+    {
+        "tags": "automate_server",
+        "peers": ${jsonencode(formatlist("http://%s:9200", aws_instance.es_backend.*.public_dns))},
+        "chef_automate": {
+          "fqdn": "${aws_instance.chef_automate.public_dns}"
+        },
+        "chef_server": {
+          "fqdn": "${aws_instance.chef_server.public_dns}"
+        }
+    }
+    EOF
     environment = "_default"
     fetch_chef_certificates = true
     run_list = ["chef-services::delivery"]
